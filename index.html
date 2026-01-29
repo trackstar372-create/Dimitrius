@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catch My Love! ❤️</title>
+    <title>Locked with Love ❤️</title>
     <style>
         body {
             display: flex;
@@ -57,15 +57,17 @@
             height: 100%;
         }
 
-        h1 { color: #d32f2f; font-size: 3rem; margin-top: 15vh; position: relative; z-index: 10; }
-
-        .buttons { 
-            display: flex; 
-            gap: 20px; 
-            margin-top: 50px; 
-            justify-content: center; 
-            align-items: center;
+        .bouncing-heart {
+            font-size: 80px;
+            animation: bounce 0.8s infinite alternate;
+            margin-top: 10vh;
         }
+
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+
+        h1 { color: #d32f2f; font-size: 2.5rem; margin-top: 20px; z-index: 10; position: relative; }
+
+        .buttons { display: flex; gap: 20px; margin-top: 30px; justify-content: center; }
 
         button {
             padding: 15px 35px;
@@ -74,23 +76,22 @@
             border-radius: 10px;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s ease, background-color 0.3s;
         }
 
-        #noBtn { background-color: #bdc3c7; color: #7f8c8d; cursor: not-allowed; }
+        #noBtn { background-color: #bdc3c7; color: white; cursor: not-allowed; }
 
         #yesBtn { 
             background-color: #4caf50; 
             color: white; 
             position: absolute; 
             z-index: 50;
-            white-space: nowrap;
+            transition: transform 0.1s ease;
         }
 
-        .celebration { display: none; text-align: center; padding-top: 20vh; z-index: 60; position: relative; }
+        .celebration { display: none; text-align: center; padding-top: 10vh; z-index: 60; position: relative; }
 
-        /* Heart Animation */
-        .heart {
+        /* Hearts */
+        .heart-float {
             position: fixed;
             bottom: -10%;
             color: #ff4081;
@@ -110,15 +111,24 @@
             25% { transform: translateX(-8px); }
             75% { transform: translateX(8px); }
         }
+
+        /* Hide the YouTube Player */
+        #youtube-player {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
     </style>
 </head>
 <body>
+
+    <div id="youtube-player"></div>
 
     <div id="lock-screen">
         <div class="lock-box">
             <h2 style="color: #d32f2f;">Enter our Special Date</h2>
             <p style="color: #777;">(MMDDYY)</p>
-            <input type="text" id="passcode" placeholder="000000" maxlength="6">
+            <input type="text" id="passcode" placeholder="080123" maxlength="6">
             <br><br>
             <button onclick="checkPasscode()" style="background-color: #ff4081; color: white;">Unlock ❤️</button>
         </div>
@@ -126,40 +136,46 @@
 
     <div id="main-content">
         <div id="question-container">
+            <div class="bouncing-heart">💝</div>
             <h1>Will you be my Valentine? ❤️</h1>
             <div class="buttons">
-                <button id="noBtn" onclick="alert('Nice try! The Yes button is right there...')">NO</button>
+                <button id="noBtn" onclick="alert('The Yes button is faster than that!')">NO</button>
                 <button id="yesBtn">YES</button>
             </div>
         </div>
 
         <div id="celebration" class="celebration">
-            <h1>VICTORY! 💖🥳</h1>
-            <p style="font-size: 1.5rem;">I knew you'd catch me eventually!</p>
-            <p style="font-size: 5rem;">💝🌹💍</p>
+            <div class="bouncing-heart">🎉</div>
+            <h1>I KNEW IT! 💖🥳</h1>
+            <p>Listen to our song! 🎶</p>
+            <p style="font-size: 5rem;">✨🌹✨</p>
         </div>
     </div>
-    
-    <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
-        let player;
-        let musicStarted = false;
-      
+        // 1. YouTube Iframe API Setup
+        var player;
         function onYouTubeIframeAPIReady() {
-          player = new YT.Player('player', {
-            height: '1',
-            width: '1',
-            videoId: '3JbmE3jjCSk',
-            playerVars: {
-              autoplay: 0,
-              controls: 0,
-              loop: 1,
-              playlist: '3JbmE3jjCSk'
-            }
-          });
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: 'dQw4w9WgXcQ', // <--- REPLACE THIS ID
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
         }
-      
+
+        function onPlayerReady(event) {
+            // Player is ready, but we wait for the click to play
+        }
+
+        // Load the API script
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
         const passInput = document.getElementById('passcode');
         const lockScreen = document.getElementById('lock-screen');
         const mainContent = document.getElementById('main-content');
@@ -167,9 +183,8 @@
         const questionContainer = document.getElementById('question-container');
         const celebration = document.getElementById('celebration');
 
-        let yesSize = 1; // Initial scale
+        let yesSize = 1;
 
-        // 1. Passcode Check
         function checkPasscode() {
             if (passInput.value === "080123") {
                 lockScreen.style.display = "none";
@@ -182,53 +197,47 @@
             }
         }
 
-        // 2. RUNAWAY & GROWING YES BUTTON
+        // Runaway & Grow Logic
         document.addEventListener('mousemove', (e) => {
             if (mainContent.style.display !== "block" || celebration.style.display === "block") return;
-
             const x = e.clientX;
             const y = e.clientY;
             const buttonRect = yesBtn.getBoundingClientRect();
-            const buttonCenterX = buttonRect.left + buttonRect.width / 2;
-            const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+            const distance = Math.sqrt(Math.pow(x - (buttonRect.left + buttonRect.width/2), 2) + Math.pow(y - (buttonRect.top + buttonRect.height/2), 2));
 
-            const distance = Math.sqrt(Math.pow(x - buttonCenterX, 2) + Math.pow(y - buttonCenterY, 2));
-
-            // Move if mouse gets close
             if (distance < 150) {
-                // Grow the button every time it teleports
-                yesSize += 0.15; 
+                yesSize += 0.15;
                 yesBtn.style.transform = `scale(${yesSize})`;
-
-                // Calculate new position
-                const padding = 50; 
-                const newX = Math.random() * (window.innerWidth - buttonRect.width - padding) + padding/2;
-                const newY = Math.random() * (window.innerHeight - buttonRect.height - padding) + padding/2;
-                
+                const newX = Math.random() * (window.innerWidth - buttonRect.width - 100) + 50;
+                const newY = Math.random() * (window.innerHeight - buttonRect.height - 100) + 50;
                 yesBtn.style.left = `${newX}px`;
                 yesBtn.style.top = `${newY}px`;
             }
         });
 
-        // 3. Success Logic
+        // Click Yes Logic
         yesBtn.addEventListener('click', () => {
             questionContainer.style.display = 'none';
             celebration.style.display = 'block';
-            yesBtn.style.display = 'none'; // Hide the giant button
+            yesBtn.style.display = 'none';
             document.body.style.backgroundColor = '#ffcdd2';
+            
+            // Play YouTube Video Audio
+            if (player && player.playVideo) {
+                player.playVideo();
+            }
+            
             heartIntervalSpeed = 50; 
         });
 
-        // 4. Heart Generator
         let heartIntervalSpeed = 300;
         function createHeart() {
             if (mainContent.style.display === "block") {
                 const heart = document.createElement('div');
-                heart.classList.add('heart');
-                heart.innerHTML = ['❤️','💖','💗','💓'][Math.floor(Math.random()*4)];
+                heart.classList.add('heart-float');
+                heart.innerHTML = '❤️';
                 heart.style.left = Math.random() * 100 + "vw";
                 heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
-                heart.style.fontSize = (Math.random() * 20 + 15) + "px";
                 document.body.appendChild(heart);
                 setTimeout(() => heart.remove(), 5000);
             }
@@ -240,5 +249,6 @@
     </script>
 </body>
 </html>
+
 
 
