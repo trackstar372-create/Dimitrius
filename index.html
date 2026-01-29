@@ -90,7 +90,6 @@
 
         .celebration { display: none; text-align: center; padding-top: 10vh; z-index: 60; position: relative; }
 
-        /* Hearts */
         .heart-float {
             position: fixed;
             bottom: -10%;
@@ -112,7 +111,7 @@
             75% { transform: translateX(8px); }
         }
 
-        /* Hide the YouTube Player */
+        /* Hidden YouTube Player */
         #youtube-player {
             position: absolute;
             top: -9999px;
@@ -128,7 +127,7 @@
         <div class="lock-box">
             <h2 style="color: #d32f2f;">Enter our Special Date</h2>
             <p style="color: #777;">(MMDDYY)</p>
-            <input type="text" id="passcode" placeholder="080123" maxlength="6">
+            <input type="text" id="passcode" placeholder="000000" maxlength="6">
             <br><br>
             <button onclick="checkPasscode()" style="background-color: #ff4081; color: white;">Unlock ❤️</button>
         </div>
@@ -147,30 +146,24 @@
         <div id="celebration" class="celebration">
             <div class="bouncing-heart">🎉</div>
             <h1>I KNEW IT! 💖🥳</h1>
-            <p>Listen to our song! 🎶</p>
+            <p style="font-size: 1.2rem;">🎶 <i>"So just turn down the lights..."</i> 🎶</p>
             <p style="font-size: 5rem;">✨🌹✨</p>
         </div>
     </div>
 
     <script>
-        // 1. YouTube Iframe API Setup
+        // YouTube API Setup
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 height: '0',
                 width: '0',
-                videoId: '3JbmE3jjCSk&list=RD3JbmE3jjCSk&start_radio=1', // <--- REPLACE THIS ID
-                events: {
-                    'onReady': onPlayerReady
-                }
+                videoId: '3JbmE3jjCSk', // Versace on the Floor
+                events: { 'onReady': onPlayerReady }
             });
         }
+        function onPlayerReady(event) {}
 
-        function onPlayerReady(event) {
-            // Player is ready, but we wait for the click to play
-        }
-
-        // Load the API script
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -215,18 +208,13 @@
             }
         });
 
-        // Click Yes Logic
+        // Yes Button Success
         yesBtn.addEventListener('click', () => {
             questionContainer.style.display = 'none';
             celebration.style.display = 'block';
             yesBtn.style.display = 'none';
             document.body.style.backgroundColor = '#ffcdd2';
-            
-            // Play YouTube Video Audio
-            if (player && player.playVideo) {
-                player.playVideo();
-            }
-            
+            if (player && player.playVideo) { player.playVideo(); }
             heartIntervalSpeed = 50; 
         });
 
@@ -242,10 +230,7 @@
                 setTimeout(() => heart.remove(), 5000);
             }
         }
-
-        function startHearts() {
-            setInterval(createHeart, heartIntervalSpeed);
-        }
+        function startHearts() { setInterval(createHeart, heartIntervalSpeed); }
     </script>
 </body>
 </html>
