@@ -143,31 +143,25 @@
   ];
 
   const noMessages = [
-    "Waittt 😭",
-    "That’s not an option 😌",
-    "Try again 👀",
-    "The answer is yes btw 💅"
+    "Hmm… think again 👀",
+    "That button isn’t helping 😌",
+    "YES is looking real good right now 💅",
+    "You know what to do 😏"
   ];
 
   let noIndex = 0;
   let yesScale = 1;
 
-  noBtn.addEventListener("mouseover", () => {
-    // Move NO button
-    const x = Math.random() * (window.innerWidth - 100);
-    const y = Math.random() * (window.innerHeight - 100);
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-
-    // Change message
+  // NO click → YES grows
+  noBtn.addEventListener("click", () => {
     subtext.textContent = noMessages[noIndex % noMessages.length];
     noIndex++;
 
-    // Grow YES button
-    yesScale += 0.15;
+    yesScale += 0.25;
     yesBtn.style.transform = `scale(${yesScale})`;
   });
 
+  // YES click
   yesBtn.addEventListener("click", () => {
     const randomMsg = yesMessages[Math.floor(Math.random() * yesMessages.length)];
     message.textContent = randomMsg;
@@ -182,6 +176,7 @@
     }
   });
 
+  // Floating hearts
   function createHeart() {
     const heart = document.createElement("div");
     heart.classList.add("heart");
@@ -194,7 +189,8 @@
 
   setInterval(createHeart, 400);
 </script>
-
+  
 </body>
 </html>
+
 
