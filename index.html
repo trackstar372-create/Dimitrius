@@ -1,195 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Be My Valentine?</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch My Love! ❤️</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffebee;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
 
-  <style>
-    body {
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-      background: linear-gradient(135deg, #ffd6e8, #ffeef5);
-      font-family: "Comic Sans MS", Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+        /* Lock Screen */
+        #lock-screen {
+            position: absolute;
+            z-index: 100;
+            background-color: #ffebee;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .card {
-      background: white;
-      padding: 50px;
-      border-radius: 25px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-      animation: popIn 1s ease;
-      z-index: 2;
-    }
+        .lock-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
 
-    @keyframes popIn {
-      from { transform: scale(0); }
-      to { transform: scale(1); }
-    }
+        input {
+            padding: 12px;
+            font-size: 1.5rem;
+            width: 160px;
+            text-align: center;
+            border: 2px solid #ff4081;
+            border-radius: 10px;
+            margin-top: 10px;
+            outline: none;
+        }
 
-    h1 { color: #ff4d6d; }
+        /* Main Content */
+        #main-content {
+            display: none;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+        }
 
-    #subtext {
-      margin-bottom: 30px;
-      font-size: 18px;
-      color: #555;
-    }
+        h1 { color: #d32f2f; font-size: 3rem; margin-top: 15vh; position: relative; z-index: 10; }
 
-    button {
-      font-size: 18px;
-      padding: 14px 30px;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
+        .buttons { 
+            display: flex; 
+            gap: 20px; 
+            margin-top: 50px; 
+            justify-content: center; 
+            align-items: center;
+        }
 
-    button:hover { transform: scale(1.1); }
+        button {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s ease, background-color 0.3s;
+        }
 
-    #yesBtn {
-      background: #ff4d6d;
-      color: white;
-      margin-right: 15px;
-    }
+        #noBtn { background-color: #bdc3c7; color: #7f8c8d; cursor: not-allowed; }
 
-    #noBtn {
-      background: #ccc;
-      position: absolute;
-    }
+        #yesBtn { 
+            background-color: #4caf50; 
+            color: white; 
+            position: absolute; 
+            z-index: 50;
+            white-space: nowrap;
+        }
 
-    #message {
-      margin-top: 25px;
-      font-size: 22px;
-      color: #ff4d6d;
-      display: none;
-    }
+        .celebration { display: none; text-align: center; padding-top: 20vh; z-index: 60; position: relative; }
 
-    /* Floating hearts */
-    .heart {
-      position: absolute;
-      bottom: -20px;
-      font-size: 24px;
-      animation: floatUp 6s linear infinite;
-    }
+        /* Heart Animation */
+        .heart {
+            position: fixed;
+            bottom: -10%;
+            color: #ff4081;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUp linear forwards;
+        }
 
-    @keyframes floatUp {
-      from { transform: translateY(0); opacity: 1; }
-      to { transform: translateY(-120vh); opacity: 0; }
-    }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
 
-    /* Tiny YouTube Player (1x1 pixel) */
-    #player {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      width: 1px;
-      height: 1px;
-      opacity: 0.01;
-      pointer-events: none;
-    }
-  </style>
+        .shake { animation: shake 0.4s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+    </style>
 </head>
-
 <body>
 
-  <!-- Tiny YouTube Player -->
-  <div id="player"></div>
+    <div id="lock-screen">
+        <div class="lock-box">
+            <h2 style="color: #d32f2f;">Enter our Special Date</h2>
+            <p style="color: #777;">(MMDDYY)</p>
+            <input type="text" id="passcode" placeholder="000000" maxlength="6">
+            <br><br>
+            <button onclick="checkPasscode()" style="background-color: #ff4081; color: white;">Unlock ❤️</button>
+        </div>
+    </div>
 
-  <div class="card">
-    <h1>Will you be my Valentine? 💘</h1>
-    <div id="subtext">I promise snacks, laughs, and good vibes 🥰</div>
+    <div id="main-content">
+        <div id="question-container">
+            <h1>Will you be my Valentine? ❤️</h1>
+            <div class="buttons">
+                <button id="noBtn" onclick="alert('Nice try! The Yes button is right there...')">NO</button>
+                <button id="yesBtn">YES</button>
+            </div>
+        </div>
 
-    <button id="yesBtn">Yes 💖</button>
-    <button id="noBtn">No 😅</button>
+        <div id="celebration" class="celebration">
+            <h1>VICTORY! 💖🥳</h1>
+            <p style="font-size: 1.5rem;">I knew you'd catch me eventually!</p>
+            <p style="font-size: 5rem;">💝🌹💍</p>
+        </div>
+    </div>
+    
+    <script src="https://www.youtube.com/iframe_api"></script>
 
-    <div id="message"></div>
-  </div>
+    <script>
+        let player;
+        let musicStarted = false;
+      
+        function onYouTubeIframeAPIReady() {
+          player = new YT.Player('player', {
+            height: '1',
+            width: '1',
+            videoId: '3JbmE3jjCSk',
+            playerVars: {
+              autoplay: 0,
+              controls: 0,
+              loop: 1,
+              playlist: '3JbmE3jjCSk'
+            }
+          });
+        }
+      
+        const passInput = document.getElementById('passcode');
+        const lockScreen = document.getElementById('lock-screen');
+        const mainContent = document.getElementById('main-content');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionContainer = document.getElementById('question-container');
+        const celebration = document.getElementById('celebration');
 
-  <!-- YouTube IFrame API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
+        let yesSize = 1; // Initial scale
 
-  <script>
-  let player;
-  let musicStarted = false;
+        // 1. Passcode Check
+        function checkPasscode() {
+            if (passInput.value === "080123") {
+                lockScreen.style.display = "none";
+                mainContent.style.display = "block";
+                startHearts();
+            } else {
+                passInput.classList.add('shake');
+                setTimeout(() => passInput.classList.remove('shake'), 400);
+                passInput.value = "";
+            }
+        }
 
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      height: '1',
-      width: '1',
-      videoId: '3JbmE3jjCSk',
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        loop: 1,
-        playlist: '3JbmE3jjCSk'
-      }
-    });
-  }
+        // 2. RUNAWAY & GROWING YES BUTTON
+        document.addEventListener('mousemove', (e) => {
+            if (mainContent.style.display !== "block" || celebration.style.display === "block") return;
 
-  const yesBtn = document.getElementById("yesBtn");
-  const noBtn = document.getElementById("noBtn");
-  const message = document.getElementById("message");
-  const subtext = document.getElementById("subtext");
+            const x = e.clientX;
+            const y = e.clientY;
+            const buttonRect = yesBtn.getBoundingClientRect();
+            const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+            const buttonCenterY = buttonRect.top + buttonRect.height / 2;
 
-  const yesMessages = [
-    "YAY!! 💕 I knew you’d say yes!",
-    "Best Valentine ever 🥰",
-    "This just got official 💘",
-    "You made my heart happy 😍"
-  ];
+            const distance = Math.sqrt(Math.pow(x - buttonCenterX, 2) + Math.pow(y - buttonCenterY, 2));
 
-  const noMessages = [
-    "Hmm… think again 👀",
-    "That button isn’t helping 😌",
-    "YES is looking real good right now 💅",
-    "You know what to do 😏"
-  ];
+            // Move if mouse gets close
+            if (distance < 150) {
+                // Grow the button every time it teleports
+                yesSize += 0.15; 
+                yesBtn.style.transform = `scale(${yesSize})`;
 
-  let noIndex = 0;
-  let yesScale = 1;
+                // Calculate new position
+                const padding = 50; 
+                const newX = Math.random() * (window.innerWidth - buttonRect.width - padding) + padding/2;
+                const newY = Math.random() * (window.innerHeight - buttonRect.height - padding) + padding/2;
+                
+                yesBtn.style.left = `${newX}px`;
+                yesBtn.style.top = `${newY}px`;
+            }
+        });
 
-  // NO click → YES grows
-  noBtn.addEventListener("click", () => {
-    subtext.textContent = noMessages[noIndex % noMessages.length];
-    noIndex++;
+        // 3. Success Logic
+        yesBtn.addEventListener('click', () => {
+            questionContainer.style.display = 'none';
+            celebration.style.display = 'block';
+            yesBtn.style.display = 'none'; // Hide the giant button
+            document.body.style.backgroundColor = '#ffcdd2';
+            heartIntervalSpeed = 50; 
+        });
 
-    yesScale += 0.25;
-    yesBtn.style.transform = `scale(${yesScale})`;
-  });
+        // 4. Heart Generator
+        let heartIntervalSpeed = 300;
+        function createHeart() {
+            if (mainContent.style.display === "block") {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = ['❤️','💖','💗','💓'][Math.floor(Math.random()*4)];
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                heart.style.fontSize = (Math.random() * 20 + 15) + "px";
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 5000);
+            }
+        }
 
-  // YES click
-  yesBtn.addEventListener("click", () => {
-    const randomMsg = yesMessages[Math.floor(Math.random() * yesMessages.length)];
-    message.textContent = randomMsg;
-    message.style.display = "block";
-    subtext.style.display = "none";
-    yesBtn.style.display = "none";
-    noBtn.style.display = "none";
-
-    if (player && !musicStarted) {
-      player.playVideo();
-      musicStarted = true;
-    }
-  });
-
-  // Floating hearts
-  function createHeart() {
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.textContent = "💖";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = Math.random() * 3 + 4 + "s";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 7000);
-  }
-
-  setInterval(createHeart, 400);
-</script>
-  
+        function startHearts() {
+            setInterval(createHeart, heartIntervalSpeed);
+        }
+    </script>
 </body>
 </html>
 
